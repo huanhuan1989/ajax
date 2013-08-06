@@ -1,0 +1,157 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>Document</title>
+<script type="text/javascript" src="js/jquery-2.0.2.min.js"></script>
+<script type="text/javascript">
+$(function(){
+  $('#clickJS').click(function(){
+		$.getScript("js/11.js",function(){
+			alert('ok');
+		});
+		return false;
+	});
+	
+	$('#clickJSON').click(function(){
+		$.getJSON('js/text.json',function(data){
+			alert('成功了吗？');
+			$('#dictionary').empty();
+			$.each(data,function(entryIndex,entry){
+				var html = '<div class="entry">';
+				html += '<h3 class="term">'+entry['term']+'</h3>';
+				html += '<div class="part">'+entry['part']+'</div>';
+				html += '<div class="definition">'
+				html += entry['definition'];
+				if(entry['quote']){
+					html += '<div class="quote">';
+					$.each(entry['quote'],function(entryIndex,line){
+						html += '<div class="quote-line">' +line+ '</div>';	
+					});
+					if(entry['author']){
+						html += '<div class="author">'+entry['author']+'</div>';
+					}
+				}
+				html += '</div>';
+				$('#dictionary').append(html);
+			});
+		});
+		return false;
+	});
+		
+	$('#clickHTML').click(function(){
+		$('.htmlBox').load('demo.html');
+		return false;
+	});
+	
+	$('#clickXML').click(function(){
+		$.get('js/demo.xml',function(data){
+			$('#showXml').empty();
+			$(data).find('entry').each(function(){
+				var $entry = $(this);
+				var html = '<div class="entry"></div>';
+				html += '<h3 class="term">'+$entry.attr('term')+'</h3>';
+				html += '<div class="part">'+$entry.attr('part')+'</div>';
+				html += '<div class="definition">';
+				html += $entry.find('definition').text();
+				var $quote = $entry.find('quote');
+				if($quote.length){
+					html += '<div class="quote">';
+					$quote.find('line').each(function(){
+						html += '<div class="quote-line">' +$(this).text()+ '</div>';	
+					});
+					if($quote.attr('author')){
+						html += '<div class="quote-author">' +$quote.attr('author')+ '</div>';
+					}
+					html += '</div>';
+				}
+				
+				html += '</div>';
+				html += '</div>';
+				$('#showXml').append($(html));
+			});
+		}); 
+		return false;
+	});
+	
+	//javascript json 调用
+	$('#getSZ').click(function(){
+		var varJson =[
+	   		{name:'huanhuan',age:'23',city:'beijing'},
+	   		{name:'majie',age:'23',city:'beijing'},
+	   		{name:'tutu',age:'26',city:'wenzhou'}
+		];
+		varJson[0].name='wanghuan';
+		
+		for(var i in varJson){
+			alert(varJson[i].name);  
+			$('#varJson').html('name:' + varJson[i].name +'　'+ 'age:' + varJson[i].age +'　'+ 'city:' + varJson[i].city + '<br/>');
+		} 
+		
+		var json ={
+			options:[
+		   		{name:'lujuan',age:'23',city:'beijing'},
+		   		{name:'lucy',age:'20',city:'hangzhou'},
+		   		{name:'yuanyuan',age:'25',city:'wenzhou'}
+			]
+		};
+		json = eval(json.options);
+		for(var n=0; n<json.length; n++){
+			alert(json[n].name);  
+			$('#varJson00').html('name:' + json[n].name +'　'+ 'age:' + json[n].age +'　'+ 'city:' + json[n].city + '<br/>');
+		} 
+		
+		
+		$.each(varJson,function(s){
+			$('#varJson01').append('name:' + varJson[s].name +'　'+ 'age:' + varJson[s].age +'　'+ 'city:' + varJson[s].city + '<br/>');
+		}); 
+		
+		
+	});
+	
+	$('#loadBtn').click(function(){
+		//responseTxt  包含来自请求的结果数据
+		//statusTxt  包含请求的状态（"success", "notmodified", "error", "timeout" 或 "parsererror"）
+		//xhr 包含 XMLHttpRequest 对象
+		//如果想要调用txt中的其他的一个标签里边的内容，那么就直接这样写 js/demo_ajax_load.txt h2
+		$('.ajaxDiv').load('js/demo_ajax_load.txt',function(responseTxt,statusTxt,xhr){
+			if(statusTxt=='success'){
+				alert('异步加载成功')
+			}
+			if(statusTxt=='error'){
+				alert('出错：'+xhr.status+':'+xhr.statusTxt)
+			}
+		});
+	});
+	
+	
+})
+</script>
+</head>
+<body>
+	
+	
+	
+	<input type="button" value="点击加载js文件" id="clickJS" />
+	<div id="dictionary"></div>
+	<input type="button" value="点击加载json文件" id="clickJSON" />
+	<div class="htmlBox"></div>
+	<input type="button" value="点击加载html文件" id="clickHTML" />
+	<div id="showXml"></div>
+	<input type="button" value="点击加载xml文件" id="clickXML" />
+	
+	<div id="varJson">
+		for循环出来：
+	</div>
+	<div id="varJson00">
+		for循环出来2：
+	</div>
+	<div id="varJson01">
+		each遍历出来：	
+	</div>
+	<input type="button" value="javascript json 调用" id="getSZ" /> 
+	<div class="ajaxDiv"></div>
+	<input type="button" value="点击加载txt文件" id="loadBtn" />
+</body>
+</html>
