@@ -24,3 +24,30 @@
  		"author":"wanghuan"
  	}
 ]
+
+//getJSON 调用方法如下：
+$('#clickJSON').click(function(){
+		$.getJSON('js/text.json',function(data){
+			alert('成功了吗？');
+			$('#dictionary').empty();
+			$.each(data,function(entryIndex,entry){
+				var html = '<div class="entry">';
+				html += '<h3 class="term">'+entry['term']+'</h3>';
+				html += '<div class="part">'+entry['part']+'</div>';
+				html += '<div class="definition">'
+				html += entry['definition'];
+				if(entry['quote']){
+					html += '<div class="quote">';
+					$.each(entry['quote'],function(entryIndex,line){
+						html += '<div class="quote-line">' +line+ '</div>';	
+					});
+					if(entry['author']){
+						html += '<div class="author">'+entry['author']+'</div>';
+					}
+				}
+				html += '</div>';
+				$('#dictionary').append(html);
+			});
+		});
+		return false;
+	});
